@@ -1,14 +1,10 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const apiProxy = createProxyMiddleware({
-  target: "https://example.org",
+  target: "https://api.openai.com",
   changeOrigin: true,
   pathRewrite: {
     "^/api/proxy": "" // strip "/api" from the URL
-  },
-  onProxyRes(proxyRes) {
-    // proxyRes.headers['x-added'] = 'foobar'; // add new header to response
-    // delete proxyRes.headers['x-removed']; // remove header from response
   }
 });
 
