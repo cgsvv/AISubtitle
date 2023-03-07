@@ -7,6 +7,19 @@ const MAX_FILE_SIZE = 512 * 1024; // 512KB
 const PAGE_SIZE = 15;
 const MAX_RETRY = 5;
 
+function download(filename: string, text: string) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
+  }
+
 function curPageNodes(nodes: Node[], curPage: number) {
     return nodes.slice(curPage*PAGE_SIZE, (curPage+1)*PAGE_SIZE);
 }
@@ -32,6 +45,7 @@ async function traslate_all(nodes: Node[]) {
                 const r = await translate_one_batch(batch);
                 results.push(...r);
                 success = true;
+                console.log(`Translated ${results.length} of ${nodes.length}`);
             } catch (e) {
                 console.error(e);
                 await sleep(3000);   // may exceed rate limit, sleep for a while
@@ -99,6 +113,11 @@ export default function Srt() {
         setCurPage(newPage);
     }
 
+    const translateFile = async () => {
+        const newnodes = await traslate_all(nodes);
+        download("output.srt", nodesToSrtText(newnodes));
+    }
+
     const translate = async () => {
         const newnodes = await translate_one_batch(curPageNodes(nodes, curPage));
         setSrt(nodesToSrtText(newnodes));
@@ -122,6 +141,7 @@ export default function Srt() {
             </div>
             <div style={{width: "400px"}}>
                 <button onClick={translate} type="button" style={{margin:"20px", width: "60px", height: "30px"}}>translate</button>
+                <button onClick={translateFile} type="button" style={{margin:"20px", width: "80px", height: "30px"}}>translateFile</button>
                 <textarea value={srt} readOnly style={{marginTop:"108px", width:"375px", height: "600px"}}></textarea>
             </div>
             </div>
