@@ -1,10 +1,15 @@
 import languageEncoding from "detect-file-encoding-and-language";
+import { ass_to_srt } from "./ass_to_srt";
 // import * as fs from "fs";
 
 export type Node = {
     pos: string;
     timestamp?: string;
     content: string;
+}
+
+export function convertToSrt(input: string): string | undefined {
+    return ass_to_srt(input);
 }
 
 export function checkIsSrtFile(content: string) {
