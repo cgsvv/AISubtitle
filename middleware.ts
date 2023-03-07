@@ -13,12 +13,11 @@ export async function middleware(req: NextRequest, context: NextFetchEvent) {
   const { sentences, targetLang, srcLang, apiKey } = await req.json();
   let rkey = `${targetLang}_${srcLang}_${sentences}}`;
   rkey = "tranres_" + await digestMessage(rkey);
-  const cached = await redis.get<string>(rkey);
+  const cached = await redis.get<string[]>(rkey);
   
   if (!isDev && cached) {
     console.log("Using cached response");
-    const result = JSON.parse(cached);
-    return NextResponse.json(result);
+    return NextResponse.json(cached);
   }
 
   // licenseKeys
