@@ -2,7 +2,7 @@ import {Node} from "../srt"
 import { OpenAIStreamPayload } from "./OpenAIResult";
 
 // gpt返回格式为： '1\n我仍然在问自己，当我离开这个漂浮的城市时，我是否做了正确的事情。\n\n2\n我不仅指工作。'
-function parse_gpt_resp(content: string) {
+export function parse_gpt_resp(content: string) {
     const parts = content.split("\n\n");
     return parts.map(p => p.substring(p.indexOf("\n") + 1));
 }

@@ -5,16 +5,21 @@ import { NextResponse } from "next/server";
 import { checkOpenaiApiKeys } from "./lib/openai/openai";
 import { ratelimit } from "./lib/upstash"
 import { isDev } from "./utils/env";
+import { digestMessage } from "./utils/fp";
 
 const redis = Redis.fromEnv();
 
 export async function middleware(req: NextRequest, context: NextFetchEvent) {
-  const { apiKey } = await req.json();
-//   const result = await redis.get<string>(bvId);
-//   if (!isDev && result) {
-//     console.log("hit cache for ", bvId);
-//     return NextResponse.json(result);
-//   }
+  const { sentences, targetLang, srcLang, apiKey } = await req.json();
+  let rkey = `${targetLang}_${srcLang}_${sentences}}`;
+  rkey = "tranres_" + await digestMessage(rkey);
+  const cached = await redis.get<string>(rkey);
+  
+  if (!isDev && cached) {
+    console.log("Using cached response");
+    const result = JSON.parse(cached);
+    return NextResponse.json(result);
+  }
 
   // licenseKeys
   if (apiKey) {
