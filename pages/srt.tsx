@@ -19,7 +19,7 @@ function download(filename: string, text: string) {
     element.click();
   
     document.body.removeChild(element);
-  }
+}
 
 function curPageNodes(nodes: Node[], curPage: number) {
     return nodes.slice(curPage*PAGE_SIZE, (curPage+1)*PAGE_SIZE);
@@ -161,7 +161,7 @@ export default function Srt() {
         <main>
             <div style={{display: "flex"}}>
             <div style={{display: "flex", height: "100vh", width: "400px", flexDirection: "column", alignItems: "center", justifyContent: "space-evenly"}}>
-                <input onChange={onChooseFile} type="file" id="file" style={{display: "block", margin: "30px"}} />
+                <input onChange={onChooseFile} type="file" accept='.srt,.ass,.txt' id="file" style={{display: "block", margin: "30px"}} />
                 <input id="biliId" style={{height:"30px"}}></input>
                 <button onClick={getBilibiliSub} style={{height:"30px"}}>获取B站字幕</button>
                 <div>

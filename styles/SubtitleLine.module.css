@@ -1,0 +1,31 @@
+
+.timestampBlock {
+    display: flex;
+    width: 200px;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+    background-color: antiquewhite;
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.contentBlock {
+    display: flex;
+    width: 500px;
+    height: 60px;
+    padding-left: 20px;
+    align-items: center;
+    background-color: aqua;
+    flex: 0 auto;
+    font-size: 20px;
+    text-align: left;
+    white-space: pre-wrap;
+}
+
+.lineContainer {
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid transparent;
+}
