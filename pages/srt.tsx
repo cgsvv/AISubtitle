@@ -39,13 +39,14 @@ function curPageNodes(nodes: Node[], curPage: number) {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function traslate_all(nodes: Node[], lang: string, apiKey?: string) {
+async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notifyResult?: any) {
     const batches: Node[][] = [];
     for (let i = 0; i < nodes.length; i += PAGE_SIZE) {
         batches.push(nodes.slice(i, i + PAGE_SIZE));
     }
     // for now, just use sequential execution
     const results: Node[] = [];
+    let batch_num = 0;
     for (const batch of batches) {
         let success = false;
         for (let i = 0; i < MAX_RETRY && !success; i++) {
@@ -53,14 +54,19 @@ async function traslate_all(nodes: Node[], lang: string, apiKey?: string) {
                 const r = await translate_one_batch(batch, lang, apiKey);
                 results.push(...r);
                 success = true;
+                if (notifyResult) {
+                    notifyResult(batch_num, r);
+                }
                 console.log(`Translated ${results.length} of ${nodes.length}`);
             } catch (e) {
                 console.error(e);
                 await sleep(3000);   // may exceed rate limit, sleep for a while
             }
         }
+        batch_num++;
         if (!success) {
             console.error(`translate_all failed for ${batch}`);
+            throw new Error(`translate file ${batch} failed`);
         }
     }
     return results;
@@ -103,10 +109,10 @@ function clearFileInput() {
     }
 }
 
-async function get_example_srt() {
-    let resp = await fetch('/1900s.srt');
-    return resp.text();
-} 
+type TranslateFileStatus = {
+    isTraslating: boolean,
+    transCount: number,
+}
 
 export default function Srt() {
     const [nodes, setNodes] = useState<Node[]>([]);
@@ -114,6 +120,7 @@ export default function Srt() {
     const [curPage, setCurPage] = useState(0);
     const [filename, setFilename] = useState("");
     const [loading, setLoading] = useState(false);
+    const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTraslating: false, transCount: 0});
 
     const getUserKey = () => {
         const res =  localStorage.getItem("user-openai-apikey-trans");
@@ -176,9 +183,26 @@ export default function Srt() {
         setCurPage(newPage);
     }
 
+    const on_trans_result = (batch_num: number, nodes: Node[]) => {
+        setTransFileStatus({isTraslating: true, transCount: batch_num+1});
+        setTransNodes(nodes => {
+            const nodesCopy = [...nodes];
+            for (let i = 0; i < PAGE_SIZE; i++) {
+                nodesCopy[batch_num * PAGE_SIZE + i] = nodes[i];
+            }
+            return nodesCopy;
+        });
+    }
+
     const translateFile = async () => {
-        const newnodes = await traslate_all(nodes, getLang(), getUserKey());
-        download("output.srt", nodesToSrtText(newnodes));
+        setTransFileStatus({isTraslating: true, transCount: 0});
+        try {
+            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result););
+            download("output.srt", nodesToSrtText(newnodes));
+        } catch (e) {
+            toast.error("translate file failed " + String(e));
+        }
+        setTransFileStatus(old => {return {isTranslating: false, ...old}});
     }
 
     const translate = async () => {
