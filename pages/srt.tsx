@@ -7,6 +7,7 @@ import { toast, Toaster } from "react-hot-toast";
 import styles from '@/styles/Srt.module.css';
 import { useTranslation } from 'next-i18next';
 import {suportedLang, suportedLangZh, commonLangZh, langBiMap} from '@/lib/lang';
+import getVideoId from 'get-video-id';
 
 const MAX_FILE_SIZE = 512 * 1024; // 512KB
 const PAGE_SIZE = 10;
@@ -225,7 +226,7 @@ export default function Srt() {
 
     const getBiliId = (url: string) => {
         if (!url.includes("bilibili.com")) {
-            toast.error(t("Input bilibili video full url"));
+            //toast.error(t("Input bilibili video full url"));
             return;
         }
 
@@ -234,18 +235,27 @@ export default function Srt() {
         if (matchResult) {
             bvId = matchResult[1];
         } else {
-            toast.error(t("do not support this video url"));
+            //toast.error(t("do not support this video url"));
         }
         return bvId;
     }
 
+
     const getBilibiliSub = async () => {
-        let videoId: string | undefined = (document.getElementById("biliId") as HTMLInputElement).value;
+        const videoUrl: string | undefined = (document.getElementById("biliId") as HTMLInputElement).value;
+        let videoId: string | undefined = videoUrl;
         if (videoId && videoId.trim() != "") {
             videoId = getBiliId(videoId.trim());
+            let isYoutube = false;
+            if (!videoId) {
+                // try youtube
+                const res = getVideoId(videoUrl);
+                if (res.service === "youtube") {videoId = res.id!; isYoutube = true; }
+            }
+
             if (videoId) {
                 try {
-                    const resp = await fetch("/api/bili?biliId=" + videoId);
+                    const resp = await fetch("/api/bili?biliId=" + videoId + "&service=" + (isYoutube? "youtube" : "bilibili"));
                     const nodes = await resp.json() as Node[];
                     setNodes(nodes);
                     setCurPage(0);
@@ -253,10 +263,10 @@ export default function Srt() {
                 } catch (e) {
                     toast.error(t("Get video subtitle failed"));
                 }
+            } else {
+                toast.error(t("Input Youtube/Bilibili video full url"));
             }
-        } else {
-            toast.error(t("Input bilibili video full url"));
-        }
+        } 
     }
 
     const download_original = () => {

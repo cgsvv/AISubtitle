@@ -60,7 +60,7 @@ function pad3(num: number) {
   return num.toString().padStart(3, "0");
 }
 
-function secs_to_subtitle(secs: number): string {
+export function secs_to_subtitle(secs: number): string {
   const h = Math.floor(secs / 3600);
   const m = Math.floor((secs % 3600) / 60);
   const s = Math.floor((secs * 1000 % 3600000) % 60000);

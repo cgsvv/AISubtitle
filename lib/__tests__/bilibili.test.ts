@@ -1,6 +1,7 @@
 import { fetchSubtitle } from "../bilibili";
 import * as srt from "../srt";
 import {suportedLang, suportedLangZh, commonLangZh} from "../lang";
+import { fetchYoutubeSubtitle, fetchYoutubeSubtitleToNodes } from "../youtube";
 
 test("test", async () => {
     expect(1+2).toBe(3);
@@ -15,4 +16,7 @@ test("test", async () => {
     for (const lang of commonLangZh) {
         console.log(lang, suportedLang[suportedLangZh.indexOf(lang)]);
     }
+
+    const res = await fetchYoutubeSubtitleToNodes("MALGrKvXql4");
+    console.log(res);
 }, 120 * 1000);
