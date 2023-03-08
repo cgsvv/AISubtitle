@@ -196,6 +196,104 @@ const suportedLangZh = `
 吴语
 `.trim().split("\n");
 
+const locales = `
+Albanian - sq
+Arabic - ar
+Armenian - hy
+Awadhi - awa
+Azerbaijani - az
+Bashkir - ba
+Basque - eu
+Belarusian - be
+Bengali - bn
+Bhojpuri - bho
+Bosnian - bs
+Brazilian Portuguese - pt-BR
+Bulgarian - bg
+Cantonese (Yue) - yue
+Catalan - ca
+Chhattisgarhi - hne
+Chinese - zh-CN
+Croatian - hr
+Czech - cs
+Danish - da
+Dogri - doi
+Dutch - nl
+English - en
+Estonian - et
+Faroese - fo
+Finnish - fi
+French - fr
+Galician - gl
+Georgian - ka
+German - de
+Greek - el
+Gujarati - gu
+Haryanvi - bgc
+Hindi - hi
+Hungarian - hu
+Indonesian - id
+Irish - ga
+Italian - it
+Japanese - ja
+Javanese - jv
+Kannada - kn
+Kashmiri - ks
+Kazakh - kk
+Konkani - kok
+Korean - ko
+Kyrgyz - ky
+Latvian - lv
+Lithuanian - lt
+Macedonian - mk
+Maithili - mai
+Malay - ms
+Maltese - mt
+Mandarin - zh-CN
+Mandarin Chinese - zh-CN
+Marathi - mr
+Marwari - mwr
+Min Nan - nan
+Moldovan - mo
+Mongolian - mn
+Montenegrin - cnr
+Nepali - ne
+Norwegian - no
+Oriya - or
+Pashto - ps
+Persian (Farsi) - fa
+Polish - pl
+Portuguese - pt
+Punjabi - pa
+Rajasthani - raj
+Romanian - ro
+Russian - ru
+Sanskrit - sa
+Santali - sat
+Serbian - sr
+Sindhi - sd
+Sinhala - si
+Slovak - sk
+Slovene - sl
+Slovenian - sl
+Spanish - es
+Swahili - sw
+Swedish - sv
+Tajik - tg
+Tamil - ta
+Tatar - tt
+Telugu - te
+Thai - th
+Turkish - tr
+Turkmen - tk
+Ukrainian - uk
+Urdu - ur
+Uzbek - uz
+Vietnamese - vi
+Welsh - cy
+Wu - wuu
+`.trim().split("\n").map(line => line.split(" - "));
+
 const commonLangZh = `
 中文
 英语
@@ -222,4 +320,24 @@ const langBiMap = (() => {
     return res;
 })();
 
-export {suportedLang, suportedLangZh, commonLangZh, langBiMap};
+const langLocaleBiMap = (() => {
+    const res = new Map<string, string>();
+    for (const words of locales) {
+        res.set(words[0], words[1]);
+        res.set(words[1], words[0]);
+    }
+    return res;
+})();
+
+function getLocale(lang: string): string | undefined {
+    let res = langLocaleBiMap.get(lang);
+    if (!res) {
+        const lang1 = langBiMap.get(lang);
+        if (lang1) {
+            res = langLocaleBiMap.get(lang1);
+        }
+    }
+    return res;
+}
+
+export {suportedLang, suportedLangZh, commonLangZh, getLocale, langBiMap, langLocaleBiMap};

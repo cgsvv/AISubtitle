@@ -26,7 +26,7 @@ export default function Header() {
     }
 
     return (
-        <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+        <div style={{margin: "0 auto", display:"flex", alignItems:"center", justifyContent:"space-between", maxWidth: "850px"}}>
             <div style={{marginLeft: "10px", marginTop: "10px"}}>
                 <Github width="33" height="33"></Github>
             </div>

@@ -20,6 +20,7 @@
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",
     "get-video-id": "^3.6.5",
+    "google-translate-api-x": "^10.5.4",
     "http-proxy-middleware": "^2.0.6",
     "next": "13.2.3",
     "next-i18next": "^13.2.1",

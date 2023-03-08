@@ -36,7 +36,7 @@ function curPageNodes(nodes: Node[], curPage: number) {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notifyResult?: any) {
+async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notifyResult?: any, useGoogle?: boolean) {
     const batches: Node[][] = [];
     for (let i = 0; i < nodes.length; i += PAGE_SIZE) {
         batches.push(nodes.slice(i, i + PAGE_SIZE));
@@ -48,7 +48,7 @@ async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notify
         let success = false;
         for (let i = 0; i < MAX_RETRY && !success; i++) {
             try {
-                const r = await translate_one_batch(batch, lang, apiKey);
+                const r = await translate_one_batch(batch, lang, apiKey, useGoogle);
                 results.push(...r);
                 success = true;
                 if (notifyResult) {
@@ -69,7 +69,7 @@ async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notify
     return results;
 }
 
-async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string) {
+async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string, useGoogle?: boolean) {
     const sentences = nodes.map(node => node.content);
     // if last sentence ends with ",", remove it
     const lastSentence = sentences[sentences.length - 1];
@@ -90,7 +90,8 @@ async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string)
     };
 
     console.time("request /api/translate");
-    const res = await fetch('/api/translate', options);
+    const url = useGoogle ? '/api/googleTran': '/api/translate';
+    const res = await fetch(url, options);
     console.timeEnd("request /api/translate");
     const jres = await res.json();
     if (jres.errorMessage) {
@@ -120,6 +121,7 @@ export default function Srt() {
     const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTranslating: false, transCount: 0});
     const {t} = useTranslation("common");
     const [langs, setLangs] = useState(commonLangZh);
+    const [useGoogle, setUseGoogle] = useState(true);
     const isEnglish = t("English") === "English";
 
     const getUserKey = () => {
@@ -197,7 +199,7 @@ export default function Srt() {
     const translateFile = async () => {
         setTransFileStatus({isTranslating: true, transCount: 0});
         try {
-            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result);
+            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result, useGoogle);
             //download("output.srt", nodesToSrtText(newnodes));
             toast.success(t("translate file successfully"));
         } catch (e) {
@@ -209,7 +211,7 @@ export default function Srt() {
     const translate = async () => {
         setLoading(true);
         try {
-            const newnodes = await translate_one_batch(curPageNodes(nodes, curPage), getLang(), getUserKey());
+            const newnodes = await translate_one_batch(curPageNodes(nodes, curPage), getLang(), getUserKey(), useGoogle);
             setTransNodes(nodes => {
                 const nodesCopy = [...nodes];
                 for (let i = 0; i < PAGE_SIZE; i++) {
@@ -329,8 +331,8 @@ export default function Srt() {
                         <div style={{color: "gray"}}>{filename ? filename : t("No subtitle selected") }</div>
                         <Subtitles nodes={curPageNodes(nodes, curPage)} transNodes={curPageNodes(transNodes, curPage)} />
                         <div style={{width: "100%", display: "flex", justifyContent: "flex-end", marginTop: "20px", marginRight: "50px" }}>
-                            {!transFileStatus.isTranslating ? <button onClick={translateFile} className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "100px" }}>{t("Translate-File")}</button> :
-                                <button onClick={translateFile} disabled className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "100px" }}>
+                            {!transFileStatus.isTranslating ? <button onClick={translateFile} className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "120px" }}>{t("Translate-File")}</button> :
+                                <button onClick={translateFile} disabled className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "120px" }}>
                                     <Image src="/loading.svg" alt="Loading..." width={20} height={20} />
                                     {t("Progress")}{transFileStatus.transCount}/{get_page_count()}
                                     </button>
