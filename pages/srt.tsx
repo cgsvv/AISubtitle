@@ -6,8 +6,7 @@ import Subtitles from '@/components/Subtitles';
 import { toast, Toaster } from "react-hot-toast";
 import styles from '@/styles/Srt.module.css';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { GetStaticProps } from 'next';
+import {suportedLang, suportedLangZh, commonLangZh, langBiMap} from '@/lib/lang';
 
 const MAX_FILE_SIZE = 512 * 1024; // 512KB
 const PAGE_SIZE = 10;
@@ -119,6 +118,8 @@ export default function Srt() {
     const [loading, setLoading] = useState(false);
     const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTranslating: false, transCount: 0});
     const {t} = useTranslation("common");
+    const [langs, setLangs] = useState(commonLangZh);
+    const isEnglish = t("English") === "English";
 
     const getUserKey = () => {
         const res =  localStorage.getItem("user-openai-apikey-trans");
@@ -300,11 +301,7 @@ export default function Srt() {
 
                             <label style={{ marginRight: "10px", marginLeft: "120px" }}>{t("targetLang")}</label>
                             <select className={styles.selectLang} id="langSelect">
-                                <option value="中文">{t("Chinese")}</option>
-                                <option value="英文">{t("English")}</option>
-                                <option value="日语">{t("Japanese")}</option>
-                                <option value="韩语">{t("Korean")}</option>
-                                <option value="西班牙语">{t("Spanish")}</option>
+                                {langs.map(lang => <option key={lang} value={lang}>{isEnglish? langBiMap.get(lang) : lang}</option>)}}
                             </select>
                             {!loading ? <button onClick={translate} type="button" title={t("API-Slow-Warn")!} className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>{t("Translate-This")}</button>
                                 : <button disabled type="button" className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>
@@ -336,13 +333,4 @@ export default function Srt() {
             </main>
         </>
     )
-}
-
-
-export async function getStaticProps({ locale }: {locale:string}) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ['common'])),
-        }
-    }
 }
