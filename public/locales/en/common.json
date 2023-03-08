@@ -1,12 +1,12 @@
 {
     "AI-Subtilte": "AI Subtitle",
     "select-local-sub": "Select subtitle",
-    "prev": "prev",
-    "next": "next",
-    "timestamp": "timestamp",
-    "original": "orginal",
-    "translated": "translated",
-    "targetLang": "target lang",
+    "prev": "Prev",
+    "next": "Next",
+    "timestamp": "Timestamp",
+    "original": "Orginal",
+    "translated": "Translated",
+    "targetLang": "Target lang",
     "Chinese": "Chinese",
     "English": "English",
     "Japanese": "Japanese",
@@ -20,5 +20,6 @@
     "Bili-Get-Sub": "Get Bili video subs",
     "Welcome": "Translate SRT/ASS files or Bilibili subtiles\nPowered by OpenAI GPT-3.5",
     "Request-Key": "Please enter your OpenAI API key, like sk-xxxx ",
-    "API-Slow-Warn": "OpenAI API may be slow, please wait"
+    "API-Slow-Warn": "OpenAI API may be slow, please wait",
+    "Progress": "IP "
 }
