@@ -1,25 +1,38 @@
 
 .timestampBlock {
     display: flex;
-    width: 200px;
+    width: 150px;
     height: 60px;
     justify-content: center;
     align-items: center;
-    background-color: antiquewhite;
-    font-size: 20px;
+    background-color:bisque;
+    font-size: 18px;
     line-height: 20px;
     text-align: center;
+    color: blueviolet;
 }
 
 .contentBlock {
     display: flex;
-    width: 500px;
+    width: 400px;
     height: 60px;
     padding-left: 20px;
     align-items: center;
     background-color: aqua;
     flex: 0 auto;
-    font-size: 20px;
+    font-size: 15px;
+    text-align: left;
+    white-space: pre-wrap;
+}
+.transBlock {
+    display: flex;
+    width: 400px;
+    height: 60px;
+    padding-left: 20px;
+    align-items: center;
+    background-color:aliceblue;
+    flex: 0 auto;
+    font-size: 15px;
     text-align: left;
     white-space: pre-wrap;
 }
