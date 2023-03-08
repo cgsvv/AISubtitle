@@ -301,7 +301,7 @@ export default function Srt() {
 
                             <label style={{ marginRight: "10px", marginLeft: "120px" }}>{t("targetLang")}</label>
                             <select className={styles.selectLang} id="langSelect">
-                                {langs.map(lang => <option key={lang} value={lang}>{isEnglish? langBiMap.get(lang) : lang}</option>)}}
+                                {langs.map(lang => <option key={lang} value={lang}>{isEnglish? langBiMap.get(lang) : lang}</option>)}
                             </select>
                             {!loading ? <button onClick={translate} type="button" title={t("API-Slow-Warn")!} className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>{t("Translate-This")}</button>
                                 : <button disabled type="button" className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>
