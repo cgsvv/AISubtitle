@@ -198,6 +198,7 @@ export default function Srt() {
         try {
             const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result);
             //download("output.srt", nodesToSrtText(newnodes));
+            toast.success("translate file successfully");
         } catch (e) {
             toast.error("translate file failed " + String(e));
         }
