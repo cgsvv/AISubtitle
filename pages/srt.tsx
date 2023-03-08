@@ -5,15 +5,13 @@ import { getEncoding, parseSrt, Node, nodesToSrtText, checkIsSrtFile, nodesToTra
 import Subtitles from '@/components/Subtitles';
 import { toast, Toaster } from "react-hot-toast";
 import styles from '@/styles/Srt.module.css';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticProps } from 'next';
 
 const MAX_FILE_SIZE = 512 * 1024; // 512KB
 const PAGE_SIZE = 10;
 const MAX_RETRY = 5;
-
-const WelcomeMessage = `
-支持翻译本地SRT/ASS格式字幕及B站字幕
-Powered by OpenAI GPT-3.5
-`
 
 function download(filename: string, text: string) {
     var element = document.createElement('a');
@@ -120,6 +118,7 @@ export default function Srt() {
     const [filename, setFilename] = useState("");
     const [loading, setLoading] = useState(false);
     const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTranslating: false, transCount: 0});
+    const {t} = useTranslation("common");
 
     const getUserKey = () => {
         const res =  localStorage.getItem("user-openai-apikey-trans");
@@ -161,13 +160,13 @@ export default function Srt() {
         const f: File = input.files[0];
         if (!f) return;
         if (f.size > MAX_FILE_SIZE) {
-            toast.error("Max file size 512KB");
+            toast.error(t("Max file size 512KB"));
             clearFileInput();
             return;
         }
         const encoding = await getEncoding(f);
         if (!encoding) {
-            toast.error("Cannot open as text file");
+            toast.error(t("Cannot open as text file"));
             clearFileInput();
             return;
         }
@@ -198,9 +197,9 @@ export default function Srt() {
         try {
             const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result);
             //download("output.srt", nodesToSrtText(newnodes));
-            toast.success("translate file successfully");
+            toast.success(t("translate file successfully"));
         } catch (e) {
-            toast.error("translate file failed " + String(e));
+            toast.error(t("translate file failed ") + String(e));
         }
         setTransFileStatus(old => {return {...old, isTranslating: false}});
     }
@@ -218,14 +217,14 @@ export default function Srt() {
             });
         } catch (e) {
             console.error("translate failed", e);
-            toast.error("translate failed" + String(e));
+            toast.error(t("translate failed") + String(e));
         }
         setLoading(false);
     }
 
     const getBiliId = (url: string) => {
         if (!url.includes("bilibili.com")) {
-            toast.error("请输入哔哩哔哩视频长链接，暂不支持b23.tv或av号");
+            toast.error(t("Input bilibili video full url"));
             return;
         }
 
@@ -234,7 +233,7 @@ export default function Srt() {
         if (matchResult) {
             bvId = matchResult[1];
         } else {
-            toast.error("暂不支持此视频链接");
+            toast.error(t("do not support this video url"));
         }
         return bvId;
     }
@@ -251,11 +250,11 @@ export default function Srt() {
                     setCurPage(0);
                     setTransNodes([]);
                 } catch (e) {
-                    toast.error("获取视频字幕失败");
+                    toast.error(t("Get video subtitle failed"));
                 }
             }
         } else {
-            toast.error("请输入视频链接");
+            toast.error(t("Input bilibili video full url"));
         }
     }
 
@@ -273,7 +272,7 @@ export default function Srt() {
     return (
         <>
             <Head>
-                <title>AI字幕助手</title>
+                <title>{t("AI-Subtilte")}</title>
             </Head>
             <main style={{minHeight: "90vh"}}>
                 <Toaster
@@ -282,32 +281,32 @@ export default function Srt() {
                     toastOptions={{ duration: 4000 }}
                 />
                 <div className={styles.welcomeMessage}>
-                    {WelcomeMessage}
+                    {t('Welcome')}
                 </div>
 
                 <div style={{ display: "flex", margin: "0 auto", paddingTop: "30px", justifyContent: "center",  maxWidth: "900px" }}>
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <div style={{ display: "flex" }}>
-                            <a href="#!" className={styles.file} style={{ marginLeft: "50px" }}>选择本地字幕
+                            <a href="#!" className={styles.file} style={{ marginLeft: "50px" }}>{t("select-local-sub")}
                                 <input onChange={onChooseFile} type="file" accept='.srt,.ass,.txt' id="file" />
                             </a>
-                            <input className={styles.biliInput} id="biliId" placeholder={"输入完整B站视频链接"} style={{ height: "30px", marginLeft: "150px", paddingLeft: "0px" }}></input>
-                            <button onClick={getBilibiliSub} className={styles.genButton} style={{ marginLeft: "20px" }} >获取B站字幕</button>
+                            <input className={styles.biliInput} id="biliId" placeholder={t("Bili-Url")} style={{ height: "30px", marginLeft: "150px", paddingLeft: "0px" }}></input>
+                            <button onClick={getBilibiliSub} className={styles.genButton} style={{ marginLeft: "20px" }} >{t("Bili-Get-Sub")}</button>
                         </div>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                            <button className={styles.navButton} onClick={() => toPage(-1)} type="button">上一页</button>
+                            <button className={styles.navButton} onClick={() => toPage(-1)} type="button">{t('prev')}</button>
                             <p style={{ display: "inline-block", textAlign: "center", width: "65px" }}>{curPage + 1} / {Math.ceil(nodes.length / PAGE_SIZE)}</p>
-                            <button className={styles.navButton} onClick={() => toPage(1)} type="button">下一页</button>
+                            <button className={styles.navButton} onClick={() => toPage(1)} type="button">{t('next')}</button>
 
-                            <label style={{ marginRight: "10px", marginLeft: "120px" }}>目标语言</label>
+                            <label style={{ marginRight: "10px", marginLeft: "120px" }}>{t("targetLang")}</label>
                             <select className={styles.selectLang} id="langSelect">
-                                <option value="中文">中文</option>
-                                <option value="英文">英文</option>
-                                <option value="日语">日语</option>
-                                <option value="韩语">韩语</option>
-                                <option value="西班牙语">西班牙语</option>
+                                <option value="中文">{t("Chinese")}</option>
+                                <option value="英文">{t("English")}</option>
+                                <option value="日语">{t("Japanese")}</option>
+                                <option value="韩语">{t("Korean")}</option>
+                                <option value="西班牙语">{t("Spanish")}</option>
                             </select>
-                            {!loading ? <button onClick={translate} type="button" title='OpenAI接口可能较慢，请耐心等待' className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>翻译本页</button>
+                            {!loading ? <button onClick={translate} type="button" title={t("API-Slow-Warn")} className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>{t("Translate-This")}</button>
                                 : <button disabled type="button" className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>
                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                         <Image
@@ -320,21 +319,30 @@ export default function Srt() {
                                 </button>}
 
                         </div>
-                        <div style={{color: "gray"}}>{filename ? filename : "未选择字幕" }</div>
+                        <div style={{color: "gray"}}>{filename ? filename : t("No subtitle selected") }</div>
                         <Subtitles nodes={curPageNodes(nodes, curPage)} transNodes={curPageNodes(transNodes, curPage)} />
                         <div style={{width: "100%", display: "flex", justifyContent: "flex-end", marginTop: "20px", marginRight: "50px" }}>
-                            {!transFileStatus.isTranslating ? <button onClick={translateFile} className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "100px" }}>翻译整个文件</button> :
+                            {!transFileStatus.isTranslating ? <button onClick={translateFile} className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "100px" }}>{t("Translate-File")}</button> :
                                 <button onClick={translateFile} disabled className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "100px" }}>
                                     <Image src="/loading.svg" alt="Loading..." width={20} height={20} />
-                                    进度{transFileStatus.transCount}/{get_page_count()}
+                                    {t("Progress")}{transFileStatus.transCount}/{get_page_count()}
                                     </button>
                             }
-                            <button onClick={download_original} className={styles.genButton} style={{ height: "30px", marginRight: "20px" }}>下载原文字幕</button>
-                            <button onClick={download_translated} className={styles.genButton} style={{ height: "30px" }}>下载译文字幕</button>
+                            <button onClick={download_original} className={styles.genButton} style={{ height: "30px", marginRight: "20px" }}>{t("Download-Original")}</button>
+                            <button onClick={download_translated} className={styles.genButton} style={{ height: "30px" }}>{t("Download-Translated")}</button>
                         </div>
                     </div>
                 </div>
             </main>
         </>
     )
+}
+
+
+export async function getStaticProps({ locale }: {locale:string}) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['common'])),
+        }
+    }
 }

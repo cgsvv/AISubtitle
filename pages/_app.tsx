@@ -4,8 +4,9 @@ import { Analytics } from "@vercel/analytics/react";
 import Head from "next/head";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import {appWithTranslation} from "next-i18next";
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <div>
       <Head>
@@ -20,3 +21,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </div>
   );
 }
+
+export default appWithTranslation(App);

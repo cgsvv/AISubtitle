@@ -3,17 +3,19 @@ import Github from "./Github";
 import { useLocalStorage } from "react-use";
 import { checkOpenaiApiKey } from "@/lib/openai/openai";
 import { toast, Toaster } from "react-hot-toast";
+import { useTranslation } from 'next-i18next';
 
 export default function Header() {
     const [userKey, setUserKey] = useLocalStorage<string>("user-openai-apikey-trans");
+    const {t} = useTranslation("common");
 
     const setOpenAIKey = () => {
-        const key = prompt("Please enter your OpenAI API key (like sk-xxxx )");
+        const key = prompt(t("Request-Key")!);
         if (key && checkOpenaiApiKey(key)) {
             setUserKey(key);
-            toast.success("OpenAI API key successfully set");
+            toast.success(t("OpenAI API key successfully set"));
         } else {
-            toast.error("OpenAI API key is invalid");
+            toast.error(t("OpenAI API key is invalid"));
         }
     }
 
