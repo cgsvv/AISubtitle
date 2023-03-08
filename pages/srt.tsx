@@ -82,7 +82,10 @@ async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string)
     console.time("request /api/translate");
     const res = await fetch('/api/translate', options);
     console.timeEnd("request /api/translate");
-    const jres: string[] = await res.json();
+    const jres = await res.json();
+    if (jres.errorMessage) {
+        throw new Error(jres.errorMessage);
+    }
     return nodesToTransNodes(nodes, jres);
 }
 
@@ -167,6 +170,7 @@ export default function Srt() {
             });
         } catch (e) {
             console.error("translate failed", e);
+            toast.error("translate failed" + String(e));
         }
         setLoading(false);
     }

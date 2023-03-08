@@ -15,7 +15,8 @@ export async function middleware(req: NextRequest, context: NextFetchEvent) {
   rkey = "tranres_" + await digestMessage(rkey);
   const cached = await redis.get<string[]>(rkey);
   
-  if (!isDev && cached) {
+  //if (!isDev && cached) {
+  if (cached) {
     console.log("Using cached response");
     return NextResponse.json(cached);
   }
@@ -37,7 +38,9 @@ export async function middleware(req: NextRequest, context: NextFetchEvent) {
   console.log(`======== ip ${identifier}, remaining: ${remaining} ========`);
   if (!apiKey && !success) {
     // return NextResponse.redirect(new URL("/shop", req.url));
-    return NextResponse.error();
+    return NextResponse.json({
+      errorMessage: "rate limited",
+    });
   }
 }
 

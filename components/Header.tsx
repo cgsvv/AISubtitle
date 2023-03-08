@@ -8,7 +8,7 @@ export default function Header() {
     const [userKey, setUserKey] = useLocalStorage<string>("user-openai-apikey-trans");
 
     const setOpenAIKey = () => {
-        const key = prompt("Please enter your OpenAI API key");
+        const key = prompt("Please enter your OpenAI API key (like sk-xxxx )");
         if (key && checkOpenaiApiKey(key)) {
             setUserKey(key);
             toast.success("OpenAI API key successfully set");
