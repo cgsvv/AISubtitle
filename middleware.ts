@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest, context: NextFetchEvent) {
   
   //if (!isDev && cached) {
   if (cached) {
-    console.log("Using cached response");
+    console.log("Using cached response " + rkey);
     return NextResponse.json(cached);
   }
 

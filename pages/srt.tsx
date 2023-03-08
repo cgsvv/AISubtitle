@@ -67,6 +67,13 @@ async function traslate_all(nodes: Node[], lang: string, apiKey?: string) {
 }
 
 async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string) {
+    const sentences = nodes.map(node => node.content);
+    // if last sentence ends with ",", remove it
+    const lastSentence = sentences[sentences.length - 1];
+    if (lastSentence.endsWith(",") || lastSentence.endsWith("，")) {
+        sentences[sentences.length - 1] = lastSentence.substring(0, lastSentence.length - 1);
+    }
+
     let options = {
         method: 'POST',
         headers: {
@@ -74,7 +81,7 @@ async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string)
         },
         body: JSON.stringify({
             "targetLang": lang,
-            "sentences": nodes.map(node => node.content),
+            "sentences": sentences,
             "apiKey": apiKey
         })
     };
@@ -96,6 +103,11 @@ function clearFileInput() {
     }
 }
 
+async function get_example_srt() {
+    let resp = await fetch('/1900s.srt');
+    return resp.text();
+} 
+
 export default function Srt() {
     const [nodes, setNodes] = useState<Node[]>([]);
     const [transNodes, setTransNodes] = useState<Node[]>([]);   // make transNode the same structure as nodes
@@ -111,6 +123,32 @@ export default function Srt() {
     const getLang = () => {
         return (document.getElementById("langSelect") as HTMLSelectElement).value;
     }
+
+    const onNewSubtitleText = (text: string, fname: string) => {
+        if (!checkIsSrtFile(text)) {
+            const converted = convertToSrt(text);
+            if (converted) {
+                text = converted;
+            } else {
+                toast.error("Cannot convert to a valid SRT file");
+                clearFileInput();
+                return;
+            }
+        }
+        const nodes = parseSrt(text);
+        setNodes(nodes);
+        setTransNodes([]);
+        setCurPage(0);
+        setFilename(fname);
+    }
+
+    useEffect(() => {
+        (async () => {
+            const resp = await fetch('/1900s.srt');
+            const text = await resp.text();
+            onNewSubtitleText(text, '1900 (Movie) example');
+        })();
+    }, []);
 
     const onChooseFile = async (e: any) => {
         const input = e.target;
@@ -129,21 +167,7 @@ export default function Srt() {
         }
         const data = await f.arrayBuffer();
         let text = new TextDecoder(encoding!).decode(data);
-        if (!checkIsSrtFile(text)) {
-            const converted = convertToSrt(text);
-            if (converted) {
-                text = converted;
-            } else {
-                toast.error("Cannot convert to a valid SRT file");
-                clearFileInput();
-                return;
-            }
-        }
-        const nodes = parseSrt(text);
-        setNodes(nodes);
-        setTransNodes([]);
-        setCurPage(0);
-        setFilename(f.name);
+        onNewSubtitleText(text, f.name);
     };
 
     const toPage = (delta: number) => {
