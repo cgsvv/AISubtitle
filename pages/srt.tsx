@@ -290,7 +290,7 @@ export default function Srt() {
                             <a href="#!" className={styles.file} style={{ marginLeft: "50px" }}>{t("select-local-sub")}
                                 <input onChange={onChooseFile} type="file" accept='.srt,.ass,.txt' id="file" />
                             </a>
-                            <input className={styles.biliInput} id="biliId" placeholder={t("Bili-Url")} style={{ height: "30px", marginLeft: "150px", paddingLeft: "0px" }}></input>
+                            <input className={styles.biliInput} id="biliId" placeholder={t("Bili-Url")!} style={{ height: "30px", marginLeft: "150px", paddingLeft: "0px" }}></input>
                             <button onClick={getBilibiliSub} className={styles.genButton} style={{ marginLeft: "20px" }} >{t("Bili-Get-Sub")}</button>
                         </div>
                         <div style={{ display: "flex", alignItems: "center" }}>
