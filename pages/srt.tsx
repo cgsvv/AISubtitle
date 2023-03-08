@@ -306,7 +306,7 @@ export default function Srt() {
                                 <option value="韩语">{t("Korean")}</option>
                                 <option value="西班牙语">{t("Spanish")}</option>
                             </select>
-                            {!loading ? <button onClick={translate} type="button" title={t("API-Slow-Warn")} className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>{t("Translate-This")}</button>
+                            {!loading ? <button onClick={translate} type="button" title={t("API-Slow-Warn")!} className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>{t("Translate-This")}</button>
                                 : <button disabled type="button" className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>
                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                         <Image
