@@ -16,7 +16,8 @@
     display: flex;
     width: 350px;
     height: 60px;
-    padding-left: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
     align-items: center;
     background-color: aqua;
     flex: 0 auto;
@@ -28,7 +29,8 @@
     display: flex;
     width: 350px;
     height: 60px;
-    padding-left: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
     align-items: center;
     background-color:aliceblue;
     flex: 0 auto;

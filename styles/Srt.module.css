@@ -69,3 +69,11 @@
     width: 80px;
     height: 30px;
 }
+
+.welcomeMessage {
+    font-size: 30px;
+    white-space: pre-wrap;
+    text-align: center;
+    font-weight: 600;
+    color:#004974;
+}
