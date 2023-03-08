@@ -1,12 +1,12 @@
 
 .timestampBlock {
     display: flex;
-    width: 150px;
+    width: 100px;
     height: 60px;
     justify-content: center;
     align-items: center;
     background-color:bisque;
-    font-size: 18px;
+    font-size: 15px;
     line-height: 20px;
     text-align: center;
     color: blueviolet;
@@ -14,7 +14,7 @@
 
 .contentBlock {
     display: flex;
-    width: 400px;
+    width: 350px;
     height: 60px;
     padding-left: 20px;
     align-items: center;
@@ -26,7 +26,7 @@
 }
 .transBlock {
     display: flex;
-    width: 400px;
+    width: 350px;
     height: 60px;
     padding-left: 20px;
     align-items: center;

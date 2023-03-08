@@ -10,7 +10,9 @@ export default function SubTitleLine({
         <div className={styles.lineContainer}>
             <div className={styles.timestampBlock}>{timeStamp}</div>
             <div className={styles.contentBlock}>{content}</div>
-            {translation != undefined && <div className={styles.transBlock}>{translation}</div>}
+            {/* always show translation for now 
+            translation != undefined &&  */}
+            <div className={styles.transBlock}>{translation || ""}</div>
         </div>     
     )
 }

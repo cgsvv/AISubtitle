@@ -1,0 +1,71 @@
+.genButton {
+    background-color: rgb(56, 189, 248);
+    color: whitesmoke;
+    border: 0;
+    border-radius: 5px;
+    transition-property: all;
+    transition-duration: 0.15s;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.genButton:hover {
+    background-color: rgb(14, 165, 233);
+}
+
+
+/* prev next page */
+.navButton {
+    background-color: rgb(56, 189, 248);
+    width: 60px;
+    height: 30px;
+    margin: 10px;
+    color: whitesmoke;
+    border: 0;
+    border-radius: 5px;
+    transition-property: all;
+    transition-duration: 0.15s;
+}
+
+.navButton:hover {
+    background-color: rgb(14, 165, 233);
+}
+
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}
+
+.biliInput {
+    border-radius: 6px;
+    background-color: transparent;
+}
+
+.selectLang {
+    background-color: #D0EEFF;
+    border-radius: 5px;
+    width: 80px;
+    height: 30px;
+}
