@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { getEncoding, parseSrt, Node, nodesToSrtText, checkIsSrtFile, nodesToTransNodes, convertToSrt } from '@/lib/srt';
 import Subtitles from '@/components/Subtitles';
 import { toast, Toaster } from "react-hot-toast";
-import { useLocalStorage } from "react-use";
 import styles from '@/styles/Srt.module.css';
 
 const MAX_FILE_SIZE = 512 * 1024; // 512KB
@@ -110,7 +109,7 @@ function clearFileInput() {
 }
 
 type TranslateFileStatus = {
-    isTraslating: boolean,
+    isTranslating: boolean,
     transCount: number,
 }
 
@@ -120,7 +119,7 @@ export default function Srt() {
     const [curPage, setCurPage] = useState(0);
     const [filename, setFilename] = useState("");
     const [loading, setLoading] = useState(false);
-    const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTraslating: false, transCount: 0});
+    const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTranslating: false, transCount: 0});
 
     const getUserKey = () => {
         const res =  localStorage.getItem("user-openai-apikey-trans");
@@ -183,26 +182,26 @@ export default function Srt() {
         setCurPage(newPage);
     }
 
-    const on_trans_result = (batch_num: number, nodes: Node[]) => {
-        setTransFileStatus({isTraslating: true, transCount: batch_num+1});
+    const on_trans_result = (batch_num: number, tnodes: Node[]) => {
+        setTransFileStatus(old => {return {...old, transCount: batch_num+1}});
         setTransNodes(nodes => {
             const nodesCopy = [...nodes];
             for (let i = 0; i < PAGE_SIZE; i++) {
-                nodesCopy[batch_num * PAGE_SIZE + i] = nodes[i];
+                nodesCopy[batch_num * PAGE_SIZE + i] = tnodes[i];
             }
             return nodesCopy;
         });
     }
 
     const translateFile = async () => {
-        setTransFileStatus({isTraslating: true, transCount: 0});
+        setTransFileStatus({isTranslating: true, transCount: 0});
         try {
-            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result););
-            download("output.srt", nodesToSrtText(newnodes));
+            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result);
+            //download("output.srt", nodesToSrtText(newnodes));
         } catch (e) {
             toast.error("translate file failed " + String(e));
         }
-        setTransFileStatus(old => {return {isTranslating: false, ...old}});
+        setTransFileStatus(old => {return {...old, isTranslating: false}});
     }
 
     const translate = async () => {
@@ -268,6 +267,8 @@ export default function Srt() {
         download("translated.srt", nodesToSrtText(nodes));
     }
 
+    const get_page_count = () => Math.ceil(nodes.length / PAGE_SIZE);
+
     return (
         <>
             <Head>
@@ -321,6 +322,12 @@ export default function Srt() {
                         <div style={{color: "gray"}}>{filename ? filename : "未选择字幕" }</div>
                         <Subtitles nodes={curPageNodes(nodes, curPage)} transNodes={curPageNodes(transNodes, curPage)} />
                         <div style={{width: "100%", display: "flex", justifyContent: "flex-end", marginTop: "20px", marginRight: "50px" }}>
+                            {!transFileStatus.isTranslating ? <button onClick={translateFile} className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "100px" }}>翻译整个文件</button> :
+                                <button onClick={translateFile} disabled className={styles.genButton} style={{ height: "30px", marginRight: "20px", width: "100px" }}>
+                                    <Image src="/loading.svg" alt="Loading..." width={20} height={20} />
+                                    进度{transFileStatus.transCount}/{get_page_count()}
+                                    </button>
+                            }
                             <button onClick={download_original} className={styles.genButton} style={{ height: "30px", marginRight: "20px" }}>下载原文字幕</button>
                             <button onClick={download_translated} className={styles.genButton} style={{ height: "30px" }}>下载译文字幕</button>
                         </div>
