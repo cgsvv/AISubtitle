@@ -7,6 +7,7 @@ The main function is to translate local subtitle files or Bilibili/YouTube subti
 ## Function Details
 
 - Support uploading local SRT/ASS format subtitle files and grabbing Bilibili/YouTube subtitles
+- Translate part of the text and display the translation in real-time:
 - Support exporting original/translated subtitles to local (currently only support SRT format)
 - Translation engine supports GPT-3.5 or Google Translate
 - Support mutual translation of all common languages
