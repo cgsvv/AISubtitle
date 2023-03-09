@@ -1,38 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+**[中文](./README-CN.md) | English**
 
-## Getting Started
+# 🤖 AI Subtitle Translation [ai.cgsv.top](https://ai.cgsv.top/en)
 
-First, run the development server:
+The main function is to translate local subtitle files or Bilibili/YouTube subtitles into the language of your choice using GPT-3.5 as the translation engine.
+
+## Function Details
+
+- Support uploading local SRT/ASS format subtitle files and grabbing Bilibili/YouTube subtitles
+- Support exporting original/translated subtitles to local (currently only support SRT format)
+- Translation engine supports GPT-3.5 or Google Translate
+- Support mutual translation of all common languages
+
+
+![AI Subtitle Translation](./public/aisub_en.png)
+
+## How it works
+
+- Using [OpenAI GPT-3.5 API](https://openai.com/api/) as the translation engine
+- Developed with [NextJS](https://nextjs.org/) and deployed on [Vercel](https://vercel.com/) with [Vercel Edge functions](https://vercel.com/features/edge-functions)
+- Using [Upstash](https://console.upstash.com/) Redis for caching and rate limiting
+
+## Notices
+
+- Please try to use your own OpenAI key for more stability (this project will not store user keys)
+- Translating complete subtitle files requires a large number of tokens, please pay attention to token usage
+- Translating complete subtitle files may take a long time, please do not close the current browser window
+
+## Run locally
+
+After copying this project to your local machine, create your own .env file based on the .example.env file and complete the required environment variables.
+
+Then, run the following command in the terminal. Once successful, you can preview the project at http://localhost:3000.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## One-Click Deploy
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/cgsvv/AISubtitle&env=OPENAI_API_KEY&project-name=ai-subtitle&repo-name=ai-subtitle)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Support - Contact Me
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+WeChat: cgsvvv
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Email: cgsv@qq.com
