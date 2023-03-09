@@ -121,8 +121,15 @@ export default function Srt() {
     const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTranslating: false, transCount: 0});
     const {t} = useTranslation("common");
     const [langs, setLangs] = useState(commonLangZh);
-    const [useGoogle, setUseGoogle] = useState(true);
     const isEnglish = t("English") === "English";
+
+    const getUseGoogle = () => {
+        const res =  localStorage.getItem("translate-engine");
+        if (res) {
+            return JSON.parse(res) === "google";
+        }
+        return false;
+    }
 
     const getUserKey = () => {
         const res =  localStorage.getItem("user-openai-apikey-trans");
@@ -199,7 +206,7 @@ export default function Srt() {
     const translateFile = async () => {
         setTransFileStatus({isTranslating: true, transCount: 0});
         try {
-            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result, useGoogle);
+            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result, getUseGoogle());
             //download("output.srt", nodesToSrtText(newnodes));
             toast.success(t("translate file successfully"));
         } catch (e) {
@@ -211,7 +218,7 @@ export default function Srt() {
     const translate = async () => {
         setLoading(true);
         try {
-            const newnodes = await translate_one_batch(curPageNodes(nodes, curPage), getLang(), getUserKey(), useGoogle);
+            const newnodes = await translate_one_batch(curPageNodes(nodes, curPage), getLang(), getUserKey(), getUseGoogle());
             setTransNodes(nodes => {
                 const nodesCopy = [...nodes];
                 for (let i = 0; i < PAGE_SIZE; i++) {
