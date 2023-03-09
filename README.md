@@ -39,7 +39,7 @@ npm run dev
 
 ## One-Click Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/cgsvv/AISubtitle&env=OPENAI_API_KEY&project-name=ai-subtitle&repo-name=ai-subtitle)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/cgsvv/AISubtitle&env=OPENAI_API_KEY,UPSTASH_REDIS_REST_URL,UPSTASH_REDIS_REST_TOKEN,UPSTASH_RATE_REDIS_REST_URL,UPSTASH_RATE_REDIS_REST_TOKEN&project-name=ai-subtitle&repo-name=ai-subtitle)
 
 ## Contact Me
 
