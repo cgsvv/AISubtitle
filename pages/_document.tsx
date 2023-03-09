@@ -4,7 +4,7 @@ export default function Document() {
 
   let description = "AI字幕翻译/格式转化小工具";
   //let ogimage = `${BASE_DOMAIN}/og-image.png`;
-  let sitename = "next.cgsv.top";
+  let sitename = "ai.cgsv.top";
   let title = "AI字幕翻译";
 
   return (

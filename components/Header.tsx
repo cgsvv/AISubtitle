@@ -4,17 +4,23 @@ import { useLocalStorage } from "react-use";
 import { checkOpenaiApiKey } from "@/lib/openai/openai";
 import { toast } from "react-hot-toast";
 import { useTranslation } from 'next-i18next';
+import { useRouter } from "next/router";
 
 export default function Header() {
     const [userKey, setUserKey] = useLocalStorage<string>("user-openai-apikey-trans");
     const [translateEngine, setTranslateEngine] = useLocalStorage<string>("translate-engine");
     const { t } = useTranslation("common");
     const { i18n } = useTranslation();
+    const router = useRouter();
     const tooltip = "Current using " + (translateEngine === "google" ? "google translate" : "GPT") + ", Click to change";
 
     const changeLang = () => {
         const newLang = i18n.language === "en" ? "zh-CN" : "en";
-        i18n.changeLanguage(newLang);
+
+        router.push({
+            pathname: router.pathname,
+            query: router.query
+        }, router.asPath, { locale: newLang });
     }
 
     const changeEngine = () => {

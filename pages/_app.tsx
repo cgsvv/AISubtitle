@@ -5,6 +5,7 @@ import Head from "next/head";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import {appWithTranslation} from "next-i18next";
+import nextI18NextConfig from '../next-i18next.config.js';
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -22,4 +23,4 @@ function App({ Component, pageProps }: AppProps) {
   );
 }
 
-export default appWithTranslation(App);
+export default appWithTranslation(App, nextI18NextConfig);
