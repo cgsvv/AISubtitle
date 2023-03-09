@@ -40,8 +40,15 @@ npm run dev
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/cgsvv/AISubtitle&env=OPENAI_API_KEY&project-name=ai-subtitle&repo-name=ai-subtitle)
 
-## Support - Contact Me
-
-WeChat: cgsvvv
+## Contact Me
 
 Email: cgsv@qq.com
+
+<details>
+<summary><h2>Support</h2></summary>
+
+<div align="left">
+    <img height="360" src="./public/we1.png" />
+    <img height="360" src="./public/zfb1.png" />
+</div>
+</details>
