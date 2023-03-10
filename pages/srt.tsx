@@ -119,8 +119,9 @@ export default function Srt() {
     const [filename, setFilename] = useState("");
     const [loading, setLoading] = useState(false);
     const [transFileStatus, setTransFileStatus] = useState<TranslateFileStatus>({isTranslating: false, transCount: 0});
+    const [showAllLang, setShowAllLang] = useState(false);
     const {t} = useTranslation("common");
-    const [langs, setLangs] = useState(commonLangZh);
+    const langs = showAllLang ? suportedLangZh : commonLangZh;
     const isEnglish = t("English") === "English";
 
     const getUseGoogle = () => {
@@ -322,7 +323,8 @@ export default function Srt() {
                             <select className={styles.selectLang} id="langSelect">
                                 {langs.map(lang => <option key={lang} value={lang}>{isEnglish? langBiMap.get(lang) : lang}</option>)}
                             </select>
-                            {!loading ? <button onClick={translate} type="button" title={t("API-Slow-Warn")!} className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>{t("Translate-This")}</button>
+                            <input type="checkbox" title={t("Show All languages")!} style={{ marginLeft: "5px" }} checked={showAllLang} onChange={e => setShowAllLang(e.target.checked)}></input>
+                            {!loading ? <button onClick={translate} type="button" title={t("API-Slow-Warn")!} className={styles.genButton} style={{ marginLeft: "5px", height: "30px", width: "80px" }}>{t("Translate-This")}</button>
                                 : <button disabled type="button" className={styles.genButton} style={{ marginLeft: "20px", height: "30px", width: "80px" }}>
                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                         <Image

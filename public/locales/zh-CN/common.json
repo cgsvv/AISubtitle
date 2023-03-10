@@ -32,5 +32,6 @@
     "No subtitle selected": "未选择字幕",
     "Progress": "进度",
     "OpenAI API key successfully set":"成功设置API Key",
-    "OpenAI API key is invalid":"API key无效"
+    "OpenAI API key is invalid":"API key无效",
+    "Show All languages": "显示所有语言"
 }
