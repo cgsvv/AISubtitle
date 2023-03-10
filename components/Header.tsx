@@ -21,7 +21,7 @@ export default function Header() {
 
     useEffect(() => {
         setTranslateEngine(translateEngineStore || "");
-    }, []);
+    }, [translateEngineStore]);
     
     const changeLang = () => {
         const newLang = i18n.language === "en" ? "zh-CN" : "en";
@@ -34,7 +34,7 @@ export default function Header() {
 
     const changeEngine = () => {
         const newEngine = translateEngine === "google" ? "openai" : "google";
-        setTranslateEngine(newEngine);
+        //setTranslateEngine(newEngine);
         setTranslateEngineStore(newEngine);
     }
 

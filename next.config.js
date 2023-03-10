@@ -12,10 +12,12 @@ const nextConfig = {
   i18n,
 }
 
+const SENTRY_DRY_RUN = !(process.env.SENTRY_DRY_RUN === 'false'); // alway dry_run unless explicitly set to false
+
 module.exports = nextConfig
 
 module.exports = withSentryConfig(
   module.exports,
-  { silent: true },
+  { silent: true, dryRun: SENTRY_DRY_RUN },
   { hideSourcemaps: true },
 );
