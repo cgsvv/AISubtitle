@@ -19,5 +19,5 @@ module.exports = nextConfig
 module.exports = withSentryConfig(
   module.exports,
   { silent: true, dryRun: SENTRY_DRY_RUN },
-  { hideSourcemaps: true },
+  { hideSourcemaps: false, hideSourceMaps: false },
 );
