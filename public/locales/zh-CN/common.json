@@ -33,5 +33,6 @@
     "Progress": "进度",
     "OpenAI API key successfully set":"成功设置API Key",
     "OpenAI API key is invalid":"API key无效",
-    "Show All languages": "显示所有语言"
+    "Show All languages": "显示所有语言",
+    "ShopTip": "次数用完啦！每天能用 {} 次，请点击 --- 购买 --- 次数哦💰"
 }

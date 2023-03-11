@@ -1,7 +1,7 @@
 import { Redis } from "@upstash/redis";
 import type { NextFetchEvent, NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-// import { validateLicenseKey } from "./lib/lemon";
+import { activateLicenseKey } from "./lib/lemon";
 import { checkOpenaiApiKeys } from "./lib/openai/openai";
 import { ratelimit } from "./lib/upstash"
 import { isDev } from "./utils/env";
@@ -28,19 +28,16 @@ export async function middleware(req: NextRequest, context: NextFetchEvent) {
     }
 
     // // 3. something-invalid-sdalkjfasncs-key
-    // if (!(await validateLicenseKey(apiKey, bvId))) {
-    //   return NextResponse.redirect(new URL("/shop", req.url));
-    // }
+    if (!(await activateLicenseKey(apiKey, rkey.substring(8, 16)))) {
+      return NextResponse.redirect(new URL("/shop", req.url));
+    }
   }
   // TODO: unique to a user (userid, email etc) instead of IP
   const identifier = req.ip ?? "127.0.0.7";
   const { success, remaining } = await ratelimit.limit("trans-" + identifier);
   console.log(`======== ip ${identifier}, remaining: ${remaining} ========`);
   if (!apiKey && !success) {
-    // return NextResponse.redirect(new URL("/shop", req.url));
-    return NextResponse.json({
-      errorMessage: "rate limited",
-    });
+    return NextResponse.redirect(new URL("/shop", req.url));
   }
 }
 

@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react';
+import { useSearchParams } from "next/navigation";
 import { getEncoding, parseSrt, Node, nodesToSrtText, checkIsSrtFile, nodesToTransNodes, convertToSrt } from '@/lib/srt';
 import Subtitles from '@/components/Subtitles';
 import { toast, Toaster } from "react-hot-toast";
@@ -8,6 +9,8 @@ import styles from '@/styles/Srt.module.css';
 import { useTranslation } from 'next-i18next';
 import {suportedLang, suportedLangZh, commonLangZh, langBiMap} from '@/lib/lang';
 import getVideoId from 'get-video-id';
+import { useLocalStorage } from 'react-use';
+import { ENABLE_SHOP } from '@/utils/constants';
 
 const MAX_FILE_SIZE = 512 * 1024; // 512KB
 const PAGE_SIZE = 10;
@@ -93,6 +96,16 @@ async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string,
     const url = useGoogle ? '/api/googleTran': '/api/translate';
     const res = await fetch(url, options);
     console.timeEnd("request /api/translate");
+
+    if (res.redirected) {
+        if (ENABLE_SHOP) {
+            window.location.href = res.url;
+            throw new Error(" redirected");
+        } else {
+            throw new Error(" rate limited. Please enter you OpenAI key");
+        }
+    }
+
     const jres = await res.json();
     if (jres.errorMessage) {
         throw new Error(jres.errorMessage);
@@ -124,6 +137,12 @@ export default function Srt() {
     const langs = showAllLang ? suportedLangZh : commonLangZh;
     const isEnglish = t("English") === "English";
 
+    // handle licence key
+    const searchParams = useSearchParams();
+    const licenceKey = searchParams.get("licence_key");
+    const [userLicenceKey, setUserLicenceKey] = useLocalStorage<string>("user-license-key");
+    useEffect(() => { licenceKey && setUserLicenceKey(licenceKey);}, [licenceKey]);
+
     const getUseGoogle = () => {
         const res =  localStorage.getItem("translate-engine");
         if (res) {
@@ -135,6 +154,7 @@ export default function Srt() {
     const getUserKey = () => {
         const res =  localStorage.getItem("user-openai-apikey-trans");
         if (res) return JSON.parse(res) as string;
+        else return userLicenceKey;
     }
 
     const getLang = () => {

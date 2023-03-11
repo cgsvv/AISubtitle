@@ -21,5 +21,6 @@
     "Welcome": "Translate SRT/ASS files or Youtube subtiles\nPowered by OpenAI GPT-3.5",
     "Request-Key": "Please enter your OpenAI API key, like sk-xxxx ",
     "API-Slow-Warn": "OpenAI API may be slow, please wait",
-    "Progress": "IP "
+    "Progress": "IP ",
+    "ShopTip": "{} free uses per day. Click to --- purchase --- more💰"
 }
