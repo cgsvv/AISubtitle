@@ -38,7 +38,8 @@ function block_to_node(block: string, linesep: string): Node | undefined {
 }
 
 export function parseSrt(text: string) {
-    text = text.replaceAll("\r", "");
+    //text = text.replaceAll("\r", "");
+    text = text.replace(/\r/g, "");
     const linesep = "\n";
     const blocks = text.split(linesep+linesep);
     const nodes: Node[] = [];
