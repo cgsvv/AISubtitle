@@ -27,10 +27,12 @@ export function nodesToQueryText(nodes: Node[]) {
 }
 
 // 中文， 英文
-function systemMessage(targetLang: string, srcLang?: string) {
+function systemMessage(targetLang: string, srcLang?: string, promptTemplate?: string) {
     if (!srcLang) {
+        if (promptTemplate) return promptTemplate.replace("{{target_lang}}", targetLang);
         return `你是一个专业的翻译。请逐行翻译上面的文本到${targetLang}，注意保留行号及换行符。`;
     } else {
+        if (promptTemplate) return promptTemplate.replace("{{target_lang}}", targetLang).replace("{{src_lang}}", srcLang);
         return `你是一个专业的翻译。请逐行把上面的文本从${srcLang}翻译到${targetLang}，注意保留行号及换行符。`;
     }
 }
@@ -51,14 +53,14 @@ function sentences_to_nodes(sentences: string[], rands: number[]): Node[] {
     return sentences.map((sentence,idx) => {return {pos:(rands[idx]).toString(), content: sentence}});
 }
 
-export function getPayload(sentences: string[], targetLang: string, srcLang?: string) {
+export function getPayload(sentences: string[], targetLang: string, srcLang?: string, promptTemplate?: string) {
     const rands = rand4_n(sentences.length);
     const nodes = sentences_to_nodes(sentences, rands);
     const payload: OpenAIStreamPayload = {
         model: "gpt-3.5-turbo",
         messages: [
             // {role: "system" as const, content: systemMessage(targetLang, srcLang) },
-            {role: "user" as const, content: nodesToQueryText(nodes) + "\n" + systemMessage(targetLang, srcLang)}],
+            {role: "user" as const, content: nodesToQueryText(nodes) + "\n" + systemMessage(targetLang, srcLang, promptTemplate)}],
         temperature: 0,    // translate task temperature 0?
         top_p: 1,
         frequency_penalty: 0,

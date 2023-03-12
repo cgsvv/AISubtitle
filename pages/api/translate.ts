@@ -19,17 +19,18 @@ export default async function handler(
     req: NextRequest,
     context: NextFetchEvent
 ) {
-    const {sentences, targetLang, srcLang, apiKey} = (await req.json()) as {
+    const {sentences, targetLang, srcLang, apiKey, promptTemplate} = (await req.json()) as {
         sentences: string[];
         targetLang: string;
         srcLang?: string;
         apiKey?: string;
+        promptTemplate?: string;
     }
     if (!sentences || sentences.length === 0) {
         return new Response("no subtitles", { status: 500 });
     }
 
-    const payload = getPayload(sentences, targetLang, srcLang);
+    const payload = getPayload(sentences, targetLang, srcLang, promptTemplate);
     const {res_keys} = payload;
 
     try {
