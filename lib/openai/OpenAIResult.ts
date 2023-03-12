@@ -16,16 +16,16 @@ export interface OpenAIStreamPayload {
   max_tokens: number;
   stream: boolean;
   n: number;
+  res_keys?: number[];
 }
 import { checkOpenaiApiKeys } from "./openai";
 import { sample } from "../../utils/fp";
-
 
 function formatResult(result: any) {
     const answer = result.choices[0].message?.content || "";
     if (answer.startsWith("\n\n")) {
       return answer.substring(2);
-    }
+    }   
     return answer;
 }
 
@@ -46,7 +46,8 @@ export async function OpenAIResult(
     apiKey?: string
   ) {
     const openai_api_key = selectApiKey(apiKey);
-  
+    
+    payload.res_keys = undefined;
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       headers: {
         "Content-Type": "application/json",

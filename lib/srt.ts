@@ -1,6 +1,6 @@
 import languageEncoding from "detect-file-encoding-and-language";
 import { ass_to_srt } from "./ass_to_srt";
-// import * as fs from "fs";
+import { parseSync, formatTimestamp } from "subtitle";
 
 export type Node = {
     pos: string;
@@ -23,31 +23,19 @@ export async function getEncoding(src: any) {
     return info.encoding;
 }
 
-export function getLineSeparator(src: string) {
-    return src.slice(0, 500).indexOf("\r\n") >= 0 ? "\r\n" : "\n";
-}
-
-function block_to_node(block: string, linesep: string): Node | undefined {
-    try {
-        const [pos, timestamp, ...rest] = block.split(linesep);
-        if (timestamp && timestamp.trim() !==  "") {
-            return {pos, timestamp, content: rest.join(linesep)};
-        }
-    } catch (e) {
-    }
-}
-
 export function parseSrt(text: string) {
-    //text = text.replaceAll("\r", "");
-    text = text.replace(/\r/g, "");
-    const linesep = "\n";
-    const blocks = text.split(linesep+linesep);
-    const nodes: Node[] = [];
-    for (const block of blocks) {
-        const node = block_to_node(block, linesep);
-        if (node) nodes.push(node);
+    const nodelist = parseSync(text);
+    let idx = 1;
+    const res: Node[] = [];
+    for (const node of nodelist) {
+        if (node.type === "cue" &&  node.data.text.trim().length > 0) {
+            const t1 = formatTimestamp(node.data.start);
+            const t2 = formatTimestamp(node.data.end);
+            res.push({pos: String(idx), timestamp: `${t1} --> ${t2}`, content: node.data.text});
+            idx++;
+        }
     }
-    return nodes;
+    return res;
 }
 
 function node_to_srt_text(node: Node, linesep: string): string {
@@ -68,10 +56,3 @@ export function nodesToTransNodes(nodes: Node[], trans: string[], append=false, 
         return {...node, content: oldContent + (trans[idx] || "")};
     });
 }
-
-// export async function readTextFile(src: string) {
-//     const encoding = await getEncoding(src);
-//     const data = fs.readFileSync(src);
-//     const s = new TextDecoder(encoding!).decode(data);
-//     return s;
-// }

@@ -2,7 +2,6 @@ import { Redis } from "@upstash/redis";
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 import { getPayload, parse_gpt_resp } from "@/lib/openai/prompt";
 import { isDev } from "@/utils/env";
-import { Node } from "@/lib/srt"
 import { OpenAIResult } from "@/lib/openai/OpenAIResult";
 import { digestMessage, getRandomInt } from "@/utils/fp";
 
@@ -14,11 +13,6 @@ const redis = Redis.fromEnv();
 
 if (!process.env.OPENAI_API_KEY) {
     throw new Error("Missing env var from OpenAI");
-}
-
-function sentences_to_nodes(sentences: string[]): Node[] {
-    const start = getRandomInt(100, 999);
-    return sentences.map((sentence,idx) => {return {pos:(start+idx).toString(), content: sentence}});
 }
 
 export default async function handler(
@@ -35,14 +29,14 @@ export default async function handler(
         return new Response("no subtitles", { status: 500 });
     }
 
-    const nodes = sentences_to_nodes(sentences);
-    const payload = getPayload(nodes, targetLang, srcLang);
+    const payload = getPayload(sentences, targetLang, srcLang);
+    const {res_keys} = payload;
 
     try {
         apiKey && console.log("=====use user api key=====");
         isDev && console.log("payload", payload);
         const result = await OpenAIResult(payload, apiKey);
-        const resp = parse_gpt_resp(result);
+        const resp = parse_gpt_resp(result, res_keys!);
 
         let rkey = `${targetLang}_${srcLang}_${sentences}}`;
         rkey = "tranres_" + await digestMessage(rkey);
