@@ -15,8 +15,8 @@ export async function middleware(req: NextRequest, context: NextFetchEvent) {
   rkey = "tranres_" + await digestMessage(rkey);
   const cached = await redis.get<string[]>(rkey);
   
-  //if (!isDev && cached) {
-  if (cached) {
+  if (!isDev && cached) {
+  //if (cached) {
     console.log("Using cached response " + rkey);
     return NextResponse.json(cached);
   }

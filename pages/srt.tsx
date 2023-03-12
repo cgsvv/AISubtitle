@@ -39,7 +39,7 @@ function curPageNodes(nodes: Node[], curPage: number) {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notifyResult?: any, useGoogle?: boolean) {
+async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notifyResult?: any, useGoogle?: boolean, promptTemplate?: string) {
     const batches: Node[][] = [];
     for (let i = 0; i < nodes.length; i += PAGE_SIZE) {
         batches.push(nodes.slice(i, i + PAGE_SIZE));
@@ -51,7 +51,7 @@ async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notify
         let success = false;
         for (let i = 0; i < MAX_RETRY && !success; i++) {
             try {
-                const r = await translate_one_batch(batch, lang, apiKey, useGoogle);
+                const r = await translate_one_batch(batch, lang, apiKey, useGoogle, promptTemplate);
                 results.push(...r);
                 success = true;
                 if (notifyResult) {
@@ -72,7 +72,7 @@ async function traslate_all(nodes: Node[], lang: string, apiKey?: string, notify
     return results;
 }
 
-async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string, useGoogle?: boolean) {
+async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string, useGoogle?: boolean, promptTemplate?: string) {
     const sentences = nodes.map(node => node.content);
     // if last sentence ends with ",", remove it
     const lastSentence = sentences[sentences.length - 1];
@@ -88,7 +88,8 @@ async function translate_one_batch(nodes: Node[], lang: string, apiKey?: string,
         body: JSON.stringify({
             "targetLang": lang,
             "sentences": sentences,
-            "apiKey": apiKey
+            "apiKey": apiKey,
+            "promptTemplate": promptTemplate
         })
     };
 
@@ -155,6 +156,11 @@ export default function Srt() {
         const res =  localStorage.getItem("user-openai-apikey-trans");
         if (res) return JSON.parse(res) as string;
         else return userLicenceKey;
+    }
+
+    const getUserPrompt = () => {
+        const res =  localStorage.getItem("user-prompt-template");
+        if (res) return res;
     }
 
     const getLang = () => {
@@ -227,7 +233,7 @@ export default function Srt() {
     const translateFile = async () => {
         setTransFileStatus({isTranslating: true, transCount: 0});
         try {
-            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result, getUseGoogle());
+            const newnodes = await traslate_all(nodes, getLang(), getUserKey(), on_trans_result, getUseGoogle(), getUserPrompt());
             //download("output.srt", nodesToSrtText(newnodes));
             toast.success(t("translate file successfully"));
         } catch (e) {
@@ -239,7 +245,7 @@ export default function Srt() {
     const translate = async () => {
         setLoading(true);
         try {
-            const newnodes = await translate_one_batch(curPageNodes(nodes, curPage), getLang(), getUserKey(), getUseGoogle());
+            const newnodes = await translate_one_batch(curPageNodes(nodes, curPage), getLang(), getUserKey(), getUseGoogle(), getUserPrompt());
             setTransNodes(nodes => {
                 const nodesCopy = [...nodes];
                 for (let i = 0; i < PAGE_SIZE; i++) {
