@@ -9,7 +9,7 @@ export const config = {
     runtime: "edge",
 }
 
-const redis = Redis.fromEnv();
+// const redis = Redis.fromEnv();
 
 if (!process.env.OPENAI_API_KEY) {
     throw new Error("Missing env var from OpenAI");
@@ -39,10 +39,10 @@ export default async function handler(
         const result = await OpenAIResult(payload, apiKey);
         const resp = parse_gpt_resp(result, res_keys!);
 
-        let rkey = `${targetLang}_${srcLang}_${sentences}}`;
-        rkey = "tranres_" + await digestMessage(rkey);
-        const data = await redis.set(rkey, JSON.stringify(resp));
-        console.log("cached data", data);
+        // let rkey = `${targetLang}_${srcLang}_${sentences}}`;
+        // rkey = "tranres_" + await digestMessage(rkey);
+        // const data = await redis.set(rkey, JSON.stringify(resp));
+        // console.log("cached data", data);
 
         return NextResponse.json(resp);
     } catch (error: any) {
